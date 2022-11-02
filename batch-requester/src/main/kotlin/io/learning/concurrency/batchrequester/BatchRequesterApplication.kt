@@ -1,7 +1,9 @@
 package io.learning.concurrency.batchrequester
 
+import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.ApplicationRunner
+import org.springframework.boot.Banner
 import org.springframework.boot.WebApplicationType
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -29,13 +31,18 @@ const val numberOfRequests = 10
 
 @OptIn(ExperimentalTime::class)
 fun main(args: Array<String>) {
+    println("Press any button to start batching!")
+    readln()
+
     val elapsed = measureTime {
         runApplication<BatchRequesterApplication>(*args) {
             webApplicationType = WebApplicationType.NONE
+            setBannerMode(Banner.Mode.OFF)
         }
     }
 
-    println("Application took ${elapsed.inWholeSeconds} seconds to execute")
+    LoggerFactory.getLogger("BatchRequesterApplication")
+        .info("Application took ${elapsed.inWholeSeconds} seconds to execute")
 }
 
 @Service
@@ -43,9 +50,11 @@ class RequesterService(
     private val webApi: WebApi
 ) {
 
+    val log = LoggerFactory.getLogger(this::class.java.simpleName)!!
+
     fun doRequests() {
         for (current in 1..numberOfRequests) {
-            println( webApi.seconds(current.toString()))
+            log.info(webApi.seconds(current.toString()))
         }
     }
 
