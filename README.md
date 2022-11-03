@@ -10,10 +10,12 @@ The idea is to simulate a scenario where an application has to do multiple HTTP 
 
 These options below will be used for this first version
 
-* Blocking sequential requests
-* Parallel requests with CompletableFuture
-* Parallel requests with WebFlux/Reactor
-* Parallel requests with CoRoutines
+* Sequential blocking requests
+* Parallel requests
+  * with CompletableFuture
+  * with ParallelStream
+  * with WebFlux/Reactor
+  * with CoRoutines
 
 
 ## Metrics

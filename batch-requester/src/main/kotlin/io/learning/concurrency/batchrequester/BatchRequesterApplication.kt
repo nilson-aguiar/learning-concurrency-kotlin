@@ -15,19 +15,22 @@ import org.springframework.web.bind.annotation.RequestParam
 import kotlin.time.ExperimentalTime
 import kotlin.time.measureTime
 
-@SpringBootApplication
-@EnableFeignClients
-class BatchRequesterApplication(
-    private val requesterService: RequesterService
-): ApplicationRunner {
+@Service
+class RequesterService(
+    private val webApi: WebApi
+) {
 
-    override fun run(args: ApplicationArguments?) {
-        requesterService.doRequests()
+    val log = LoggerFactory.getLogger(this::class.java.simpleName)!!
+
+    fun doRequests() {
+        for (current in 1..amountOfRequests) {
+            log.info(webApi.seconds(current.toString()))
+        }
     }
 
 }
 
-const val numberOfRequests = 10
+const val amountOfRequests = 5
 
 @OptIn(ExperimentalTime::class)
 fun main(args: Array<String>) {
@@ -45,17 +48,16 @@ fun main(args: Array<String>) {
         .info("Application took ${elapsed.inWholeSeconds} seconds to execute")
 }
 
-@Service
-class RequesterService(
-    private val webApi: WebApi
-) {
 
-    val log = LoggerFactory.getLogger(this::class.java.simpleName)!!
 
-    fun doRequests() {
-        for (current in 1..numberOfRequests) {
-            log.info(webApi.seconds(current.toString()))
-        }
+@SpringBootApplication
+@EnableFeignClients
+class BatchRequesterApplication(
+    private val requesterService: RequesterService
+): ApplicationRunner {
+
+    override fun run(args: ApplicationArguments?) {
+        requesterService.doRequests()
     }
 
 }
